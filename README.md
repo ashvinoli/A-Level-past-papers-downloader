@@ -6,7 +6,7 @@ Install all dependencies
 pip install beautifulsoup4
 ```
 ## Usage
-Using the program is simple just
+Using the program is simple, just
 ```
 python get_all_pdfs_from_site.py
 ```
