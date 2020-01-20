@@ -6,6 +6,8 @@ import re
 import pathlib #this library lets mkdir word recursively, default mkdir could only crease folders to one level up
 
 url = "http://onlineexamhelp.com/past-papers/cambridge-international-a-as-level"
+
+
 def form_dic():
     global url
     my_dict = {}
@@ -19,8 +21,27 @@ def form_dic():
             level+=1
     return my_dict 
 
-def download_papers(my_sub):
-    global url
+def download_all_from_extreme_papers():
+    dir_path = os.path.dirname(os.path.realpath(__file__))   
+    urls = ["https://papers.xtremepape.rs/CAIE/AS and A Level/Biology (9700)/","https://papers.xtremepape.rs/CAIE/AS and A Level/Mathematics (9709)/","https://papers.xtremepape.rs/CAIE/AS and A Level/Physics (9702)/","https://papers.xtremepape.rs/CAIE/AS and A Level/Computer Science (9608)/","https://papers.xtremepape.rs/CAIE/AS and A Level/Chemistry (9701)/"]
+    count = 0
+    for url in urls:
+        soup = BeautifulSoup(requests.get(url).text,"html.parser")
+        folder_location = os.path.join(dir_path,url.split("/")[-2])
+        if not os.path.exists(folder_location):
+            pathlib.Path(folder_location).mkdir(parents=True, exist_ok=True)
+        all_html = soup.findAll('a')
+        for links in all_html:
+            my_href = str(links.get("href"))
+            if my_href.endswith(".pdf"):
+                print("Downloading file %s"%(my_href))
+                file_name = os.path.join(folder_location,my_href)
+                my_file = open(file_name,"wb")
+                my_file.write(requests.get(urljoin(url,my_href)).content)
+                my_file.close()
+                
+                
+def download_papers(my_sub,url):
     complete_url = url+"/"+my_sub
     soup = BeautifulSoup(requests.get(complete_url).text,"html.parser")
     all_html = soup.findAll('a')
@@ -54,12 +75,14 @@ def download_papers(my_sub):
                 f.write(requests.get(urljoin(url,link['href'])).content)
 
 if __name__ == "__main__":
-    my_dic = form_dic()
-    for _ in my_dic:
-        print(str(_)+"->"+my_dic[_])
-    print("\n\n")
-    print("Select the number of subject:")
-    number = input()
-    download_papers(my_dic[int(number)])
+    #global url
+    #my_dic = form_dic()
+    #for _ in my_dic:
+    #    print(str(_)+"->"+my_dic[_])
+    #print("\n\n")
+    #print("Select the number of subject:")
+    #number = input()
+    #download_papers(my_dic[int(number)],url)
+    download_all_from_extreme_papers()
     
     
