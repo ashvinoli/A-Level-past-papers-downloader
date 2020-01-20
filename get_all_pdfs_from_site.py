@@ -36,9 +36,10 @@ def download_all_from_extreme_papers():
             if my_href.endswith(".pdf"):
                 print("Downloading file %s"%(my_href))
                 file_name = os.path.join(folder_location,my_href)
-                my_file = open(file_name,"wb")
-                my_file.write(requests.get(urljoin(url,my_href)).content)
-                my_file.close()
+                if not os.path.exists(file_name):
+                    my_file = open(file_name,"wb")
+                    my_file.write(requests.get(urljoin(url,my_href)).content)
+                    my_file.close()
                 
                 
 def download_papers(my_sub,url):
