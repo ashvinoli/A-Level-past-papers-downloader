@@ -97,10 +97,13 @@ def merge_similar_A_Levels_paper_into_one():
     
     with open("errlog.txt","w") as o:
         pass
-    for i in range(7):
-        paper_types_gathered[str(i)]=[]  
+    
 
     for dir in all_dirs:
+        #empty the paper types first
+        for i in range(8):
+            paper_types_gathered[str(i)]=[] 
+         
         for file_name in os.listdir(dir):
             if file_name.endswith(".pdf"):
                 tokens = re.split("_|\.",file_name)
@@ -119,8 +122,8 @@ def merge_similar_A_Levels_paper_into_one():
             for item in paper_types_gathered[key]:
                 try:
                     ms_of_current_paper = re.sub("qp","ms",item)
-                    qp_file_to_read = open(item,"rb")
-                    ms_file_to_read = open(ms_of_current_paper,"rb")
+                    qp_file_to_read = open(os.path.join(dir,item),"rb")
+                    ms_file_to_read = open(os.path.join(dir,ms_of_current_paper),"rb")
                     pdf_qp_file = pypdf.PdfFileReader(qp_file_to_read)
                     pdf_ms_file = pypdf.PdfFileReader(ms_file_to_read)
                     total_pages = pdf_qp_file.numPages
@@ -135,20 +138,12 @@ def merge_similar_A_Levels_paper_into_one():
                     with open("errlog.txt","a") as errlog:
                         errlog.write(f"Failed to write  content for {item}\n")
                         continue
-            write_file = open(f"{key}.pdf","wb")
+            write_file = open(os.path.join(dir,f"{key}.pdf"),"wb")
             pdfWriter.write(write_file)
             write_file.close()
             
 
-
-
 def run_program():
-    #put_pages_to_text("Chemistry_Syllabus.pdf",2,3)
-    #print(parse_text_content("Chemistry_Syllabus.pdf_page_2"))
-    #text = get_page_content("9701_s11_qp_11.pdf")
-    #questions = extract_a_levels_questions(text,"9701_m18_qp_12.pdf")
-    #for q_num,question in enumerate(questions):
-    #    print(q_num+1,question)
     all_data = parse_text_content("chemistry_syllabus.txt")
     print(all_data)
     for key in all_data:

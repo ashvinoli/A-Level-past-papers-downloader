@@ -1,0 +1,3 @@
+textract
+PyPDF2
+BeautifulSoup
