@@ -6,6 +6,11 @@ import pathlib
 from datetime import date
 import json
 
+def disp_menu(urls):
+    for i,j in enumerate(urls):
+        print(f"{i+1}:{j}")
+    resp = input("Choose which paper to download: Type 'a' for all:")
+    return resp
 
 def download_all():
     dir_path = os.path.dirname(os.path.realpath(__file__))   
@@ -14,6 +19,14 @@ def download_all():
         url_header = data["site"]
         subjects = data["subjects"]
         combined_urls = [urljoin(url_header,sub) for sub in subjects]
+        resp = disp_menu(combined_urls)
+        if resp.isnumeric():
+            num = int(resp)
+            if num<1 or num>(len(combined_urls)):
+                print("Not a valid response!")
+                quit()
+            combined_urls = [combined_urls[int(resp)-1]]
+            
         for url in combined_urls:
             cur_year = date.today().year
             init_year = data["init_year"]

@@ -30,7 +30,7 @@ def split_pdf(file_name,start_page,end_page,output_file):
         if not(0<=start_page<total_pages and 0<=end_page<total_pages and start_page<=end_page):
             return None
         else:
-            pdfWriter = pypdf.PdfFileWriter()
+            pdfWriter = pypdf.PdfWriter()
             for page_num in range(start_page-1,end_page):
                 pdfWriter.addPage(pdf_file.getPage(page_num))
             with open(output_file,"wb") as output_pdf:
@@ -117,21 +117,21 @@ def merge_similar_A_Levels_paper_into_one():
 
 
         for key in paper_types_gathered:
-            pdfWriter = pypdf.PdfFileWriter()
+            pdfWriter = pypdf.PdfWriter()
             paper_types_gathered[key].sort()
             for item in paper_types_gathered[key]:
                 try:
                     ms_of_current_paper = re.sub("qp","ms",item)
                     qp_file_to_read = open(os.path.join(dir,item),"rb")
                     ms_file_to_read = open(os.path.join(dir,ms_of_current_paper),"rb")
-                    pdf_qp_file = pypdf.PdfFileReader(qp_file_to_read)
-                    pdf_ms_file = pypdf.PdfFileReader(ms_file_to_read)
-                    total_pages = pdf_qp_file.numPages
+                    pdf_qp_file = pypdf.PdfReader(qp_file_to_read)
+                    pdf_ms_file = pypdf.PdfReader(ms_file_to_read)
+                    total_pages = len(pdf_qp_file.pages)
                     for page_num in range(0,total_pages):
-                        pdfWriter.addPage(pdf_qp_file.getPage(page_num))
-                    total_pages = pdf_ms_file.numPages
+                        pdfWriter.add_page(pdf_qp_file.pages[page_num])
+                    total_pages = len(pdf_ms_file.pages)
                     for page_num in range(1,total_pages):
-                        pdfWriter.addPage(pdf_ms_file.getPage(page_num))
+                        pdfWriter.add_page(pdf_ms_file.pages[page_num])
                     print(f"Read from {item} successfully")
                 except:
                     print(f"Failed to read content from {item}")
